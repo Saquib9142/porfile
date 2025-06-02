@@ -1,51 +1,22 @@
-const express = require('express');
-const multer = require('multer');
-const fs = require('fs');
-const axios = require('axios');
-const path = require('path');
-require('dotenv').config();
+<div id="welcome-image" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+">
+  <img src="path/to/your/image.png" alt="Welcome" style="max-width: 90%; max-height: 90%; border-radius: 10px;">
+</div>
 
-const app = express();
-const upload = multer({ dest: 'uploads/' });
-
-const {
-  GITHUB_TOKEN,
-  GITHUB_USERNAME,
-  GITHUB_REPO
-} = process.env;
-
-app.post('/upload', upload.single('image'), async (req, res) => {
-  const filePath = req.file.path;
-  const fileName = req.file.originalname;
-  const fileContent = fs.readFileSync(filePath, { encoding: 'base64' });
-
-  const githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/images/${fileName}`;
-
-  try {
-    const response = await axios.put(githubApiUrl, {
-      message: `Uploaded ${fileName}`,
-      content: fileContent
-    }, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github.v3+json'
-      }
-    });
-
-    // Delete the file from local temp
-    fs.unlinkSync(filePath);
-
-    return res.json({
-      success: true,
-      url: response.data.content.download_url
-    });
-
-  } catch (error) {
-    console.error(error.response?.data || error.message);
-    return res.status(500).json({ success: false, error: 'Upload failed' });
-  }
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
+<script>
+  // Auto hide after 3 seconds (optional)
+  setTimeout(() => {
+    const welcome = document.getElementById('welcome-image');
+    if (welcome) welcome.style.display = 'none';
+  }, 3000); // 3000ms = 3 sec
+</script>
